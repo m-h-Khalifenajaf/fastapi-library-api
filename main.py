@@ -3,11 +3,20 @@ from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
-information_books = [
-    {"title" : "python", "id" : 1},
-    {"title" : "C++", "id" : 2},
-    {"title" : "Java", "id" : 3},
-    ]
+information_books = {
+    1 : {
+        "title" : "Python", 
+        "author" : "Joshua Welsh"
+        },
+    2 : {
+        "title" : "C/C++ Prog l : Fund Prog Concepts/C/C++ Prog Ll",
+        "author" : "LAD Custom Publishing"
+        },
+    3 : {
+        "title" : "Machine learning",
+        "author" : "Ethem Alpaydin"
+        },
+}
 
 last_book_id = 3
 
@@ -16,51 +25,67 @@ last_book_id = 3
 def get_information_books():
     list_name_books = []
     
-    for item in information_books:
-        list_name_books.append(item["title"])
+    for book in information_books.values():
+        list_name_books.append(book["title"])
     return list_name_books
 
 @app.post("/books")
-def create_book(title_new_book:str):
+def create_book(title_new_book: str, author_new_book: str):
     global last_book_id
     last_book_id += 1
     
-    book_dict = {
-        "title": title_new_book,
-        "id": last_book_id
-    }
-    information_books.append(book_dict)
+    information_books[last_book_id] = {
+        "title" : title_new_book,
+        "author" : author_new_book,
+        }
         
-    return "The book was successfully registered."
+    return {
+            "Message" : "The book was successfully registered.",
+            "book Information" : information_books[last_book_id],
+            }
 
 @app.get("/books/{id_book}")
-def get_book(id_book:int):
-    for book in information_books:
-        if book["id"] == id_book:
-            return book
-    raise HTTPException(
-        status_code=404,
-        detail="Book not found"
-        )
+def get_book(id_book: int):
+    try:
+        return information_books[id_book]
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail="Book not found"
+            )
+        
+    # if id_book in information_books.keys():
+    #     return information_books[id_book]
+    # raise HTTPException(
+    #     status_code=404,
+    #     detail="Book not found"
+    #     )
 
 @app.patch("/books/{id_book}")
-def update_book(id_book:int, title:str):
-    for book in information_books:
-        if book["id"] == id_book:
-            book["title"] = title
-            return "Information successfully recorded."
-    raise HTTPException(
-        status_code=404,
-        detail="Book id not found"
-        )
+def update_book(id_book: int, title: str=None, author: str=None):
+    if id_book in information_books:
+        if title is not None:
+            information_books[id_book]["title"] = title
+        if author is not None:
+            information_books[id_book]["author"] = author
+            
+        return {
+            "Message" : "The book was successfully updated.",
+            "book Information" : information_books[id_book],
+            }
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="Book id not found"
+            )
 
 @app.delete("/books/{id_book}")
-def delete_book(id_book : int):
-    for book in information_books:
-        if book["id"] == id_book:
-            information_books.remove(book)
-            return "The book was successfully deleted."
-    raise HTTPException(
+def delete_book(id_book: int):
+    if id_book in information_books:
+        information_books.pop(id_book)
+        return "The book was successfully deleted."
+    else:
+        raise HTTPException(
             status_code=404,
             detail="Book id not found"
             )
