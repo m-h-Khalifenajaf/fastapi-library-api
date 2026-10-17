@@ -1,4 +1,4 @@
-# FastAPI Library API | API مدیریت کتابخانه با FastAPI
+# FastAPI Library API | مدیریت کتابخانه با FastAPI
 
 [فارسی](#فارسی) | [English](#english)
 
