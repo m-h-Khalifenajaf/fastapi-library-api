@@ -160,35 +160,6 @@ http://127.0.0.1:8000/docs
 | PATCH | `/books/{id_book}?title={title}` | Update a book's title |
 | DELETE | `/books/{id_book}` | Delete a book by ID |
 
-### Example Requests
-
-Add a new book:
-
-```http
-POST /books?title_new_book=FastAPI
-```
-
-Retrieve a book by ID:
-
-```http
-GET /books/4
-```
-
-Example response:
-
-```json
-{
-  "title": "FastAPI",
-  "id": 4
-}
-```
-
-If the requested book does not exist, the API returns an HTTP 404 response.
-
 ### Data Storage
 
 Book information is stored in an in-memory Python list. All changes are lost when the application restarts.
-
-### Project Purpose
-
-This project was created for educational purposes to practice building APIs with FastAPI, working with HTTP methods, and implementing CRUD operations.
